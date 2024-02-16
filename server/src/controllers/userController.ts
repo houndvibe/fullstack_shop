@@ -1,5 +1,6 @@
 import { User } from "../db/db.js";
 import bcrypt from "bcrypt";
+import ApiError from "../error/ApiError.js";
 import jwt from "jsonwebtoken";
 
 const generateJwt = (id, email, role): string => {
@@ -13,12 +14,14 @@ class UserController {
     const { email, password, role } = req.body;
 
     if (!email || !password) {
-      return next(Error("Нет данных"));
+      return next(ApiError.badRequest("некоректный email или пароль"));
     }
 
     const condidate = await User.findOne({ where: { email } });
     if (condidate) {
-      return next(Error("Такой уже есть"));
+      return next(
+        ApiError.badRequest("Пользователь с таким email уже существует ")
+      );
     }
 
     const hashedPassword: string = await bcrypt.hash(password, 5);
@@ -37,7 +40,7 @@ class UserController {
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return next(Error("нет такого юзера"));
+      return next(ApiError.internal("Пользователь с таким именем не найден"));
     }
 
     const comparePassword: boolean = bcrypt.compareSync(
@@ -46,7 +49,7 @@ class UserController {
     );
 
     if (!comparePassword) {
-      return next(Error("Указа не верный пароль"));
+      return next(ApiError.internal("Указа не верный пароль"));
     }
 
     const token: string = generateJwt(user.id, user.email, user.role);
@@ -54,7 +57,9 @@ class UserController {
   }
 
   async checkAuth(req, res, next) {
-    //TODO
+    const token = generateJwt(req.user.id, req.user.email, req.user.role);
+
+    return res.json({ token });
   }
 }
 
