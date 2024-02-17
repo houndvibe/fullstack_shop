@@ -53,11 +53,17 @@ class UserController {
     }
 
     const token: string = generateJwt(user.id, user.email, user.role);
-    return res.json({ token });
+    return res.json({ token, role: user.role });
   }
 
   async checkAuth(req, res, next) {
     const token = generateJwt(req.user.id, req.user.email, req.user.role);
+
+    const user = await User.findOne({ where: { email: req.user.email } });
+
+    if (!user) {
+      return next(ApiError.internal("Юзер был удален из базы"));
+    }
 
     return res.json({ token });
   }

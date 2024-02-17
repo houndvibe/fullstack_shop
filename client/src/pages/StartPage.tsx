@@ -3,8 +3,10 @@ import Container from "@mui/material/Container";
 import { Fragment } from "react";
 import AppToolbar from "../components/Toolbar";
 import { Outlet } from "react-router-dom";
+import rootStore from "../store/rootStore";
 
 const StartPage = () => {
+  console.log(JSON.parse(JSON.stringify(rootStore.userStore.user)));
   return (
     <Fragment>
       <Container disableGutters maxWidth={false}>

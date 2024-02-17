@@ -9,19 +9,21 @@ interface MyToken {
 }
 
 export default class UserApi {
-  static async register(email: string, password: string) {
+  static async register(email: string, password: string, isAdmin: boolean) {
+    const role = isAdmin ? "ADMIN" : "USER";
+
     try {
-      const res = await $axios.post("api/user/registration", {
+      const { data } = await $axios.post("api/user/registration", {
         email,
         password,
-        role: "ADMIN",
+        role,
       });
 
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", data.token);
 
       rootStore.modalStore.setLoginModalState(false);
       rootStore.userStore.setIsAuth(true);
-      rootStore.userStore.setUser({ email, role: "ADMIN" });
+      rootStore.userStore.setUser({ email, role });
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         rootStore.modalStore.setLoginModalError(e.response!.data.message);
@@ -42,7 +44,7 @@ export default class UserApi {
 
       rootStore.modalStore.setLoginModalState(false);
       rootStore.userStore.setIsAuth(true);
-      rootStore.userStore.setUser({ email, role: "ADMIN" });
+      rootStore.userStore.setUser({ email, role: data.role });
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         rootStore.modalStore.setLoginModalError(e.response!.data.message);

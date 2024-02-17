@@ -8,21 +8,25 @@ import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
 import rootStore from "../store/rootStore.js";
 import { observer } from "mobx-react-lite";
-import { routes } from "../routes/routes.js";
 import { Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useToolbarRoutes from "../hooks/userRoutes.js";
 
 interface AppToolbarProps {}
 
 const AppToolbar: React.FC<AppToolbarProps> = observer(() => {
-  const toolbarRoutes = rootStore.userStore.isAuth
-    ? routes[0].children!
-    : routes[0].children!.filter((item) => item.type === "PUBLIC");
+  const userStore = rootStore.userStore;
+  const modalStore = rootStore.modalStore;
+
+  const toolbarRoutes = useToolbarRoutes(
+    userStore.isAuth,
+    userStore.user?.role
+  );
 
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    rootStore.modalStore.setLoginModalState(true);
+    modalStore.setLoginModalState(true);
   };
 
   const handleLogOut = () => {
@@ -69,7 +73,7 @@ const AppToolbar: React.FC<AppToolbarProps> = observer(() => {
               );
             })}
           </Box>
-          {rootStore.userStore.isAuth ? (
+          {userStore.isAuth ? (
             <>
               {" "}
               <IconButton

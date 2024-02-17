@@ -3,7 +3,14 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { observer } from "mobx-react-lite";
 import rootStore from "../../store/rootStore.js";
-import { Button, FormControl, Input, InputLabel } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  Input,
+  InputLabel,
+} from "@mui/material";
 import { useState } from "react";
 import UserApi from "../../api/userApi.js";
 
@@ -16,22 +23,26 @@ const MyModal: React.FC<MyModalProps> = observer(() => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const handleClose = (): void => {
     modalStore.setLoginModalState(false);
     modalStore.setLoginModalError(null);
+    setIsRegister(false);
   };
 
   const handleRegister = (email: string, password: string) => {
-    UserApi.register(email, password);
+    UserApi.register(email, password, isAdmin);
     setEmail("");
     setPassword("");
+    setIsAdmin(false);
   };
 
   const handleLogin = (email: string, password: string) => {
     UserApi.login(email, password);
     setEmail("");
     setPassword("");
+    setIsAdmin(false);
   };
 
   const handleChangeMode = (bool: boolean): void => {
@@ -39,6 +50,11 @@ const MyModal: React.FC<MyModalProps> = observer(() => {
     setEmail("");
     setPassword("");
     modalStore.setLoginModalError(null);
+    setIsAdmin(false);
+  };
+
+  const handleToggle = () => {
+    setIsAdmin(!isAdmin);
   };
 
   return (
@@ -66,64 +82,14 @@ const MyModal: React.FC<MyModalProps> = observer(() => {
             p: 4,
           }}
         >
-          {isRegister ? (
+          {!isRegister ? (
             <>
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 LOGIN
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 <>New one? </>
-                <Button onClick={() => handleChangeMode(false)}>
-                  Register
-                </Button>
-              </Typography>
-              <FormControl variant="standard" sx={{ width: 0.85 }}>
-                <InputLabel htmlFor="component-simple">Email</InputLabel>
-                <Input
-                  id="emailInput"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </FormControl>
-              <FormControl
-                variant="standard"
-                sx={{ width: 0.85, marginTop: 1 }}
-              >
-                <InputLabel htmlFor="component-simple">Password</InputLabel>
-                <Input
-                  id="passwordInput"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </FormControl>
-              {modalStore.loginModalError && (
-                <Typography
-                  id="modal-modal-title"
-                  variant="subtitle2"
-                  component="h2"
-                  color={"red"}
-                  align="center"
-                  marginTop={2}
-                >
-                  {modalStore.loginModalError}
-                </Typography>
-              )}
-              <Button
-                variant="contained"
-                sx={{ marginTop: 4, marginLeft: 25 }}
-                onClick={() => handleLogin(email, password)}
-              >
-                Enter
-              </Button>
-            </>
-          ) : (
-            <>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                REGISTRATION
-              </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                <>Already have account? </>
-                <Button onClick={() => handleChangeMode(true)}>Login</Button>
+                <Button onClick={() => handleChangeMode(true)}>Register</Button>
               </Typography>
               <FormControl variant="standard" sx={{ width: 0.85 }}>
                 <InputLabel htmlFor="component-simple">Email</InputLabel>
@@ -159,11 +125,65 @@ const MyModal: React.FC<MyModalProps> = observer(() => {
 
               <Button
                 variant="contained"
-                sx={{ marginTop: 4, marginLeft: 18 }}
-                onClick={() => handleRegister(email, password)}
+                sx={{ marginTop: 4, marginLeft: 25 }}
+                onClick={() => handleLogin(email, password)}
               >
-                Registration
+                Enter
               </Button>
+            </>
+          ) : (
+            <>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                REGISTRATION
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                <>Already have account? </>
+                <Button onClick={() => handleChangeMode(false)}>Login</Button>
+              </Typography>
+              <FormControl variant="standard" sx={{ width: 0.85 }}>
+                <InputLabel htmlFor="component-simple">Email</InputLabel>
+                <Input
+                  id="emailInput"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{ width: 0.85, marginTop: 1 }}
+              >
+                <InputLabel htmlFor="component-simple">Password</InputLabel>
+                <Input
+                  id="passwordInput"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </FormControl>
+              {modalStore.loginModalError && (
+                <Typography
+                  id="modal-modal-title"
+                  variant="subtitle2"
+                  component="h2"
+                  color={"red"}
+                  align="center"
+                  marginTop={2}
+                >
+                  {modalStore.loginModalError}
+                </Typography>
+              )}
+              <Box sx={{ marginTop: 2 }}>
+                <FormControlLabel
+                  control={<Checkbox onChange={handleToggle} />}
+                  label="admin"
+                />
+                <Button
+                  variant="contained"
+                  sx={{ marginTop: 2, marginLeft: 6 }}
+                  onClick={() => handleRegister(email, password)}
+                >
+                  Registration
+                </Button>
+              </Box>
             </>
           )}
         </Box>
