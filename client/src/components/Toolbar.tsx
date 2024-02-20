@@ -11,6 +11,7 @@ import { observer } from "mobx-react-lite";
 import { Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useToolbarRoutes from "../hooks/userRoutes.js";
+import { COLOR_MAIN } from "../colors.js";
 
 interface AppToolbarProps {}
 
@@ -37,8 +38,8 @@ const AppToolbar: React.FC<AppToolbarProps> = observer(() => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+    <Box>
+      <AppBar position="static" sx={{ bgcolor: COLOR_MAIN }}>
         <Toolbar>
           <IconButton
             size="large"

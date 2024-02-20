@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import UserApi from "../../api/userApi.js";
+import CustomMUIButton from "../CustomMUIButton.js";
 
 interface MyModalProps {}
 
@@ -123,13 +124,13 @@ const MyModal: React.FC<MyModalProps> = observer(() => {
                 </Typography>
               )}
 
-              <Button
-                variant="contained"
+              <CustomMUIButton
+                variant="ok"
                 sx={{ marginTop: 4, marginLeft: 25 }}
                 onClick={() => handleLogin(email, password)}
               >
                 Enter
-              </Button>
+              </CustomMUIButton>
             </>
           ) : (
             <>
@@ -176,13 +177,13 @@ const MyModal: React.FC<MyModalProps> = observer(() => {
                   control={<Checkbox onChange={handleToggle} />}
                   label="admin"
                 />
-                <Button
-                  variant="contained"
+                <CustomMUIButton
+                  variant="ok"
                   sx={{ marginTop: 2, marginLeft: 6 }}
                   onClick={() => handleRegister(email, password)}
                 >
                   Registration
-                </Button>
+                </CustomMUIButton>
               </Box>
             </>
           )}

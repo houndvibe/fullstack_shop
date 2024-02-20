@@ -1,3 +1,5 @@
+import AdminPage from "../pages/AdminPage.js";
+import ShopPage from "../pages/ShopPage.js";
 import StartPage from "../pages/StartPage.js";
 
 export const routes = [
@@ -17,21 +19,21 @@ export const routes = [
       },
       {
         path: "/shop",
-        element: <>ShopPage</>,
+        element: <ShopPage />,
         type: "PUBLIC",
         access_type: "USER",
         title: "Shop ",
       },
       {
         path: "/profile",
-        element: <>Profile '/profile' _AUTHENTICATED_</>,
+        element: <>PROFILE</>,
         type: "PRIVATE",
         access_type: "USER",
         title: "Profile",
       },
       {
         path: "/admin",
-        element: <>Admin '/profile' _AUTHENTICATED_</>,
+        element: <AdminPage />,
         type: "PRIVATE",
         access_type: "ADMIN",
         title: "Admin pannel",

@@ -62,8 +62,6 @@ export default class UserApi {
 
       const { email, role } = jwtDecode<MyToken>(data.token);
 
-      console.log(jwtDecode(data.token));
-
       rootStore.userStore.setUser({ email, role });
       rootStore.userStore.setIsAuth(true);
 

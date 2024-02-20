@@ -9,6 +9,7 @@ const App = observer(() => {
   useEffect(() => {
     UserApi.check();
   }, []);
+
   return (
     <>
       <CssBaseline />

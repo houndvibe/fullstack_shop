@@ -17,6 +17,7 @@ export class User extends Model {
   declare password: string;
   declare role: CreationOptional<"USER" | "ADMIN">;
 }
+
 User.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -27,6 +28,26 @@ User.init(
   {
     sequelize,
     modelName: "user",
+  }
+);
+
+export class Device extends Model {
+  declare id: string;
+  declare title: string;
+  declare brand: string;
+  declare price: number;
+}
+
+Device.init(
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    title: { type: DataTypes.STRING, unique: true, allowNull: false },
+    brand: { type: DataTypes.STRING, allowNull: false },
+    price: { type: DataTypes.INTEGER, allowNull: false },
+  },
+  {
+    sequelize,
+    modelName: "device",
   }
 );
 
