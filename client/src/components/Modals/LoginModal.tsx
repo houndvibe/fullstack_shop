@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import UserApi from "../../api/userApi.js";
-import CustomMUIButton from "../CustomMUIButton.js";
+import CustomMUIButton from "../UI/CustomMUIButton.js";
 
 interface MyModalProps {}
 

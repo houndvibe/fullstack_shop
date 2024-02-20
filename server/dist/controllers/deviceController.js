@@ -14,5 +14,14 @@ class DeviceController {
         const allProducts = await Device.findAll();
         return res.json({ allProducts });
     }
+    async deleteOne(req, res, next) {
+        const id = req.params.id;
+        const product = await Device.destroy({
+            where: {
+                id,
+            },
+        });
+        return res.json({ id });
+    }
 }
 export default new DeviceController();

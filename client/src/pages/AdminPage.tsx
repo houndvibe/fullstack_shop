@@ -2,27 +2,33 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DeviceApi from "../api/deviceApi";
 import { Box, FormControl, Input, InputLabel } from "@mui/material";
-import CustomMUIButton from "../components/CustomMUIButton";
+import CustomMUIButton from "../components/UI/CustomMUIButton";
 import rootStore from "../store/rootStore";
-import { COLOR_MAIN } from "../colors";
+import CustomMUITable from "../components/UI/CustomMUITable";
 
 const AdminPage = observer(() => {
-  useEffect(() => {
-    DeviceApi.getAllDevices();
-  }, []);
-
   const [title, setTitle] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [brand, setBrand] = useState<string>("");
 
-  const handleAddItem = () => {
-    DeviceApi.addDevice(title, price, brand);
+  useEffect(() => {
+    DeviceApi.getAllDevices();
+  }, []);
+
+  const handleAddItem = async () => {
+    await DeviceApi.addDevice(title, price, brand);
+    DeviceApi.getAllDevices();
     setTitle("");
     setPrice(0);
     setBrand("");
   };
 
   const deviceStore = rootStore.deviceStore;
+
+  const handleDelete = async (id: number) => {
+    await DeviceApi.deleteDevice(id);
+    DeviceApi.getAllDevices();
+  };
 
   return (
     <div>
@@ -51,27 +57,23 @@ const AdminPage = observer(() => {
             onChange={(e) => setBrand(e.target.value)}
           />
         </FormControl>
-        <CustomMUIButton variant="ok" onClick={handleAddItem}>
-          Add
-        </CustomMUIButton>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <CustomMUIButton
+            variant="ok"
+            onClick={handleAddItem}
+            sx={{ width: 200 }}
+          >
+            Add
+          </CustomMUIButton>
+        </Box>
+
         <Box>
-          {deviceStore.devices.map((device) => {
-            return (
-              <Box
-                key={device.id}
-                sx={{
-                  border: `1px solid ${COLOR_MAIN}`,
-                  padding: 2,
-                  margin: 2,
-                  minWidth: 200,
-                }}
-              >
-                <div> {device.brand}</div>
-                <div> {device.title}</div>
-                <div> {device.price}</div>
-              </Box>
-            );
-          })}
+          {deviceStore.devices.length ? (
+            <CustomMUITable
+              data={deviceStore.devices}
+              deleteFunc={handleDelete}
+            />
+          ) : null}
         </Box>
       </Box>
     </div>

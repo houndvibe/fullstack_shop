@@ -1,6 +1,6 @@
 import { Button, ButtonProps, ThemeProvider, createTheme } from "@mui/material";
 import { forwardRef } from "react";
-import { COLOR_BUTTON_DANGER, COLOR_BUTTON_OK } from "../colors";
+import { COLOR_BUTTON_DANGER, COLOR_BUTTON_OK } from "../../colors";
 
 declare module "@mui/material/Button" {
   interface ButtonPropsVariantOverrides {

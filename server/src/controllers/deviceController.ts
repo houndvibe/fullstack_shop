@@ -1,6 +1,4 @@
 import { Device } from "../db/db.js";
-import bcrypt from "bcrypt";
-import ApiError from "../error/ApiError.js";
 
 class DeviceController {
   async addOne(req, res, next) {
@@ -17,6 +15,17 @@ class DeviceController {
   async getAll(req, res, next) {
     const allProducts = await Device.findAll();
     return res.json({ allProducts });
+  }
+
+  async deleteOne(req, res, next) {
+    const id = req.params.id;
+    const product = await Device.destroy({
+      where: {
+        id,
+      },
+    });
+
+    return res.json({ id });
   }
 }
 

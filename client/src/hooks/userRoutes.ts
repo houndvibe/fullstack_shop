@@ -8,7 +8,9 @@ const useToolbarRoutes = (isAuth: boolean, role?: "ADMIN" | "USER") => {
   const y =
     role === "ADMIN" ? x : x.filter((item) => item.access_type === "USER");
 
-  const toolbarRoutes = y.filter((item) => item.title != "Profile");
+  const toolbarRoutes = y.filter(
+    (item) => item.title != "Profile" && item.title !== "User"
+  );
 
   return toolbarRoutes;
 };
