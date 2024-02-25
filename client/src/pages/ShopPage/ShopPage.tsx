@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import rootStore from "../store/rootStore";
-import DeviceApi from "../api/deviceApi";
-import ProductCard from "../components/ProductCard";
+import rootStore from "../../store/rootStore";
+import DeviceApi from "../../api/deviceApi";
+import ProductCard from "../../components/ProductCard";
 import { Box } from "@mui/material";
-import { COLOR_MAIN } from "../colors";
+import { COLOR_MAIN } from "../../colors";
 
 const ShopPage = observer(() => {
   useEffect(() => {

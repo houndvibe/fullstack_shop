@@ -1,10 +1,12 @@
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
-import DeviceApi from "../api/deviceApi";
+import { Suspense, useEffect, useState } from "react";
+import DeviceApi from "../../api/deviceApi";
 import { Box, FormControl, Input, InputLabel } from "@mui/material";
-import CustomMUIButton from "../components/UI/CustomMUIButton";
-import rootStore from "../store/rootStore";
-import CustomMUITable from "../components/UI/CustomMUITable";
+import CustomMUIButton from "../../components/UI/CustomMUIButton";
+import rootStore from "../../store/rootStore";
+import { lazy } from "react";
+
+const CustomMUITable = lazy(() => import("../../components/UI/CustomMUITable"));
 
 const AdminPage = observer(() => {
   const [title, setTitle] = useState<string>("");
@@ -66,13 +68,14 @@ const AdminPage = observer(() => {
             Add
           </CustomMUIButton>
         </Box>
-
         <Box>
           {deviceStore.devices.length ? (
-            <CustomMUITable
-              data={deviceStore.devices}
-              deleteFunc={handleDelete}
-            />
+            <Suspense fallback={<>Loading...</>}>
+              <CustomMUITable
+                data={deviceStore.devices}
+                deleteFunc={handleDelete}
+              />
+            </Suspense>
           ) : null}
         </Box>
       </Box>

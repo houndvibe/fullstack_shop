@@ -18,11 +18,22 @@ import Tooltip from "@mui/material/Tooltip";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { DeviceProps } from "../../store/deviceStore";
 import { observer } from "mobx-react-lite";
 import { COLOR_BACKGROUND } from "../../colors";
+import {
+  FormControl,
+  Input,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+
+type SubFilterProps = {
+  filter: string;
+  priceFilter: { from: number; to: number };
+};
 
 interface Data {
   id: number;
@@ -193,10 +204,23 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 interface EnhancedTableToolbarProps {
   numSelected: number;
   handleDelete: () => void;
+  setFilterType: (type: string) => void;
+  setSubFilterType: (type: SubFilterProps) => void;
+  filterType: string;
+  subFilterType: SubFilterProps;
+  tableData: DeviceProps[];
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, handleDelete } = props;
+  const {
+    numSelected,
+    handleDelete,
+    setFilterType,
+    filterType,
+    subFilterType,
+    setSubFilterType,
+    tableData,
+  } = props;
 
   return (
     <Toolbar
@@ -238,11 +262,118 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        <React.Fragment>
+          <Tooltip title="Filter list">
+            <FormControl fullWidth sx={{ margin: 2, maxWidth: 300 }}>
+              <InputLabel id="demo-simple-select-label">Filter</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={filterType}
+                label="Age"
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                {headCells.map(({ id }) => {
+                  return (
+                    <MenuItem value={id} key={id}>
+                      {id}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Tooltip>
+          {headCells.map((item) => {
+            if (filterType === item.id) {
+              return filterType === "brand" ? (
+                <Tooltip title="Brand" key={item.id}>
+                  <FormControl fullWidth sx={{ margin: 2, maxWidth: 300 }}>
+                    <InputLabel id="demo-simple-select-label">
+                      {item.id}
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={subFilterType.filter}
+                      label="Age"
+                      onChange={(e) =>
+                        setSubFilterType({
+                          ...subFilterType,
+                          filter: e.target.value,
+                        })
+                      }
+                    >
+                      {tableData.map((item) => {
+                        return (
+                          <MenuItem
+                            value={item[filterType]}
+                            key={item[filterType]}
+                          >
+                            {item[filterType]}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Tooltip>
+              ) : filterType === "price" ? (
+                <Box display="flex" key={filterType}>
+                  <Tooltip title="Price">
+                    <FormControl fullWidth sx={{ margin: 2, maxWidth: 300 }}>
+                      <InputLabel id="1">from</InputLabel>
+                      <Input
+                        id="1"
+                        onChange={(e) =>
+                          setSubFilterType({
+                            ...subFilterType,
+                            priceFilter: {
+                              ...subFilterType.priceFilter,
+                              from: +e.target.value,
+                            },
+                          })
+                        }
+                      />
+                    </FormControl>
+                  </Tooltip>
+                  <Tooltip title="Price">
+                    <FormControl fullWidth sx={{ margin: 2, maxWidth: 300 }}>
+                      <InputLabel id="1">to</InputLabel>
+                      <Input
+                        id="1"
+                        onChange={(e) =>
+                          setSubFilterType({
+                            ...subFilterType,
+                            priceFilter: {
+                              ...subFilterType.priceFilter,
+                              to: +e.target.value,
+                            },
+                          })
+                        }
+                      />
+                    </FormControl>
+                  </Tooltip>
+                </Box>
+              ) : (
+                <Tooltip title={filterType} key={item.id}>
+                  <FormControl fullWidth sx={{ margin: 2, maxWidth: 300 }}>
+                    <InputLabel id="demo-simple-select-label">
+                      {item.id}
+                    </InputLabel>
+                    <Input
+                      onChange={(e) =>
+                        setSubFilterType({
+                          ...subFilterType,
+                          filter: e.target.value,
+                        })
+                      }
+                    />
+                  </FormControl>
+                </Tooltip>
+              );
+            }
+            return null;
+          })}
+        </React.Fragment>
       )}
     </Toolbar>
   );
@@ -265,8 +396,24 @@ const CustomMUITable = observer((props: TableProps) => {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const [filterType, setFilterType] = React.useState("");
+  const [subFilterType, setSubFilterType] = React.useState<SubFilterProps>({
+    filter: "",
+    priceFilter: {
+      from: 0,
+      to: 0,
+    },
+  });
+
   const handleDelete = () => {
     selected.forEach((item) => props.deleteFunc(item));
+  };
+
+  const handleSetFilterType = (type: string): void => {
+    setFilterType(type);
+  };
+  const handleSetSubFilterType = (type: SubFilterProps): void => {
+    setSubFilterType(type);
   };
 
   const handleRequestSort = (
@@ -329,11 +476,23 @@ const CustomMUITable = observer((props: TableProps) => {
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      ),
-    [order, orderBy, page, rowsPerPage, rows]
+      stableSort(rows, getComparator(order, orderBy))
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+        .filter((item) => {
+          return filterType === "title"
+            ? item.title
+                .toLowerCase()
+                .includes(subFilterType.filter.toLowerCase())
+            : filterType === "brand"
+            ? item.brand.toLowerCase() === subFilterType.filter.toLowerCase()
+            : filterType === "id"
+            ? String(item.id).includes(subFilterType.filter)
+            : filterType === "price"
+            ? item.price > subFilterType.priceFilter.from &&
+              item.price < subFilterType.priceFilter.to
+            : item;
+        }),
+    [order, orderBy, page, rowsPerPage, rows, filterType, subFilterType]
   );
 
   return (
@@ -342,6 +501,11 @@ const CustomMUITable = observer((props: TableProps) => {
         <EnhancedTableToolbar
           numSelected={selected.length}
           handleDelete={handleDelete}
+          setFilterType={handleSetFilterType}
+          filterType={filterType}
+          setSubFilterType={handleSetSubFilterType}
+          subFilterType={subFilterType}
+          tableData={props.data}
         />
         <TableContainer>
           <Table

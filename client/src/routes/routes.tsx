@@ -1,11 +1,16 @@
-import AdminPage from "../pages/AdminPage.js";
-import ShopPage from "../pages/ShopPage.js";
-import StartPage from "../pages/StartPage.js";
+import { Suspense } from "react";
+import StartPage from "../pages/StartPage";
+import ShopPage from "../pages/ShopPage";
+import AdminPage from "../pages/AdminPage";
 
 export const routes = [
   {
     path: "/",
-    element: <StartPage />,
+    element: (
+      <Suspense>
+        <StartPage />
+      </Suspense>
+    ),
     type: "PUBLIC",
     access_type: "USER",
     title: "Home",
@@ -19,7 +24,11 @@ export const routes = [
       },
       {
         path: "/shop",
-        element: <ShopPage />,
+        element: (
+          <Suspense>
+            <ShopPage />
+          </Suspense>
+        ),
         type: "PUBLIC",
         access_type: "USER",
         title: "Shop ",
@@ -33,7 +42,11 @@ export const routes = [
       },
       {
         path: "/admin",
-        element: <AdminPage />,
+        element: (
+          <Suspense> 
+            <AdminPage />
+          </Suspense>
+        ),
         type: "PRIVATE",
         access_type: "ADMIN",
         title: "Admin pannel",

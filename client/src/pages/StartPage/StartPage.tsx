@@ -1,9 +1,9 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import AppToolbar from "../components/Toolbar";
+import AppToolbar from "../../components/Toolbar";
 import { Outlet } from "react-router-dom";
-import AppFooter from "../components/Footer";
-import { COLOR_BACKGROUND } from "../colors";
+import AppFooter from "../../components/Footer";
+import { COLOR_BACKGROUND } from "../../colors";
 
 const StartPage = () => {
   return (
